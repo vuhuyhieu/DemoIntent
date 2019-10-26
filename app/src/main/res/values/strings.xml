@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Chương trình quản lý</string>
+    <string name="main_activity_title">DANH MỤC SÁCH</string>
+    <string name="book_information">THÔNG TIN SÁCH</string>
+    <string name="book_name">Tên sách</string>
+    <string name="day_publish">Năm xuất bản</string>
+    <string name="type">Loại sách</string>
+    <string name="button_ok">Lưu sách</string>
+    <string name="button_cancel">Xóa</string>
+    <string name="type_edu_book">Giáo Trình</string>
+    <string name="type_novel_book">Tiểu Thuyết</string>
+    <string name="input_book_name">nhập tên sách</string>
+    <string name="input_day_publish">nhập năm xuất bản</string>
+    <string name="add_new_book">Thêm sách</string>
+    <string name="delete_book">Xóa sách</string>
+</resources>
