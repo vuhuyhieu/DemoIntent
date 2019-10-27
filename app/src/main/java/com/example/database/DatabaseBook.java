@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.example.model.Book;
 
@@ -98,5 +99,16 @@ public class DatabaseBook extends SQLiteOpenHelper {
         for (int i = 0; i < listBook.size(); i++) {
             addNewBook(listBook.get(i));
         }
+    }
+
+    public void updateBook(Book book){
+        SQLiteDatabase database = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COL_NAME, book.getName());
+        values.put(COL_DAY_PUBLISH, book.getDayPublish());
+        String type = book.isNovel() ? "Tieu Thuyet" : "Giao Trinh";
+        values.put(COL_TYPE, type);
+        database.update(TABLE_NAME, values, COL_ID+" =? ", new String[]{String.valueOf(book.getId())});
+        database.close();
     }
 }

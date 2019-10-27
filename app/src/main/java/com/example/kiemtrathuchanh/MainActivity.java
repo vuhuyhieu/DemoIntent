@@ -8,7 +8,9 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,7 +29,8 @@ public class MainActivity extends AppCompatActivity {
     private AdapterBook adapterBook;
     private DatabaseBook databaseBook;
     private Book selectedBook;
-    public static final int REQUEST_CODE = 1;
+    public static final int REQUEST_ADD_NEW = 1;
+    public static final int REQUEST_UPDATE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +72,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_add_new:
-                openAddNewBookActivity();
+            case R.id.menu_update:
+                openUpdateBookActivity();
                 break;
             case R.id.menu_delete:
                 openDeleteDialog();
@@ -78,6 +81,47 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onContextItemSelected(item);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.header_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_add_new:
+                openAddNewBookActivity();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void openUpdateBookActivity() {
+        Intent intent = new Intent(this, UpdateBookActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("book", selectedBook);
+        intent.putExtra("data", bundle);
+        startActivityForResult(intent, REQUEST_UPDATE);
+    }
+
+//    private void openTest() {
+//        Log.d("Make call exception", "vao day");
+//        String phoneNumber = "0982960442";
+//        try{
+//            Uri uri = Uri.parse("tel:"+phoneNumber);
+//            Intent intent = new Intent(Intent.ACTION_CALL, uri);
+//            if (intent.resolveActivity(getPackageManager()) != null &&
+//                    ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED){
+//                startActivity(intent);
+//            }
+//        }catch (Exception ex){
+//            Log.d("Make call exception", ex.toString());
+//        }
+//
+//    }
 
     private void openDeleteDialog() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -106,17 +150,24 @@ public class MainActivity extends AppCompatActivity {
 
     private void openAddNewBookActivity() {
         Intent intent = new Intent(this, AddNewBookActivity.class);
-        startActivityForResult(intent, REQUEST_CODE);
+        startActivityForResult(intent, REQUEST_ADD_NEW);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
-            Bundle bundle = data.getBundleExtra("data");
-            Book book = (Book) bundle.getSerializable("book");
-            databaseBook.addNewBook(book);
-            refresh();
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_ADD_NEW) {
+                Bundle bundle = data.getBundleExtra("data");
+                Book book = (Book) bundle.getSerializable("book");
+                databaseBook.addNewBook(book);
+                refresh();
+            } else if (requestCode == REQUEST_UPDATE) {
+                Bundle bundle = data.getBundleExtra("updatedData");
+                Book book = (Book) bundle.getSerializable("updatedBook");
+                databaseBook.updateBook(book);
+                refresh();
+            }
         }
     }
 
